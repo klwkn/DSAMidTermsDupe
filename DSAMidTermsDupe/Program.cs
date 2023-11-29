@@ -56,7 +56,7 @@ namespace DSAMidTermsDupe
                 Environment.Exit(1);
             }
 
-            Workbook excelBook = excelApp.Workbooks.Open(@"C:\Users\rbuen\Downloads\Menus.xlsx");
+            Workbook excelBook = excelApp.Workbooks.Open(@"C:\Users\rbuen\Downloads\Menus.xlsx"); //Make sure this is the correct directory.
             _Worksheet excelSheet = excelBook.Sheets[1];
             Range excelRange = excelSheet.UsedRange;
             int rows = excelRange.Rows.Count;
