@@ -28,6 +28,7 @@ namespace DSAMidTermsDupe
                 elements.Add((item, priority, total));
                 elements.Sort((c, d) => c.priority.CompareTo(d.priority));
             }
+
             public (T item, int priority, string total) Dequeue()
             {
                 if (Count == 0)
@@ -42,7 +43,7 @@ namespace DSAMidTermsDupe
         }
         static void Main(string[] args)
         {
-            List<string> list1 = new List<string>();
+            List<string> menuRow = new List<string>();
             List<List<string>> list = new List<List<string>>();
             Stack<string> customer1 = new Stack<string>();
             Stack<string> customer2 = new Stack<string>();
@@ -64,27 +65,29 @@ namespace DSAMidTermsDupe
 
             for (int i = 1; i <= rows; i++)
             {
+                //List<string> menuRow = new List<string>();
                 for (int j = 1; j <= cols; j++)
                 {
                     if (excelRange.Cells[i, j] != null && excelRange.Cells[i, j].Value2 != null)
                     {
-                        list1.Add(excelRange.Cells[i, j].Value2.ToString());
+                        menuRow.Add(excelRange.Cells[i, j].Value2.ToString());
                     }
                 }
+                list.Add(menuRow);
             }
 
             Console.WriteLine("Welcome to Buenaflor's Restaurant!");
             Console.WriteLine("\nHere's the list of our Menu:   ");
             int a = 0;
-            for (int i = 0; i < list1.Count; i += 3)
+            for (int i = 0; i < menuRow.Count; i += 3)
             {
                 Console.WriteLine("".PadLeft(38, '-'));
-                Console.WriteLine($"| {list1[i],-5} | {list1[i + 1],-15} | {list1[i + 2],-5} |");
+                Console.WriteLine($"| {menuRow[i],-5} | {menuRow[i + 1],-15} | {menuRow[i + 2],-5} |");
             }
             Console.WriteLine("".PadLeft(38, '-'));
 
             int menus = 1;
-            int totalPriority = 0;
+            int totalPriority = 1;
             PriorityQueue<Stack<string>> orders = new PriorityQueue<Stack<string>>();
             for (int i = 0; i < 3; i++)
             {
@@ -93,6 +96,7 @@ namespace DSAMidTermsDupe
                 int ans = Convert.ToInt32(Console.ReadLine());
                 Console.Write("\nHow many food items are you going to order?: ");
                 int quantity = Convert.ToInt32(Console.ReadLine());
+
                 int subtotal = 0;
                 Stack<string> currentCustomerOrders = new Stack<string>();
                 for (int j = 0; j < quantity; j++)
@@ -102,34 +106,32 @@ namespace DSAMidTermsDupe
                     Console.Write("\nInsert Quantity of order: ");
                     int foodquan = Convert.ToInt32(Console.ReadLine());
 
-                    while (menus <= list.Count)
+                    foreach (var menuItem in list)
                     {
-                        if (foodnum == Convert.ToInt32(list[menus - 1][0]))
+                        if (Convert.ToString(foodnum) == (menuItem[0]))
                         {
-                            subtotal += foodquan * Convert.ToInt32(list[menus - 1][2]);
-                            currentCustomerOrders.Push($"{list[menus - 1][1]} x {foodquan}");
+                            subtotal += foodquan * Convert.ToInt32(menuItem[2]);
+                            currentCustomerOrders.Push($"{menuItem[1]} x {foodquan}");
                         }
-                        menus++;
                     }
-                    menus = 1;
                 }
-                int priority = ans == 1 ? 1 : 2;
-                totalPriority += priority;
 
                 orders.EnqueueSort(currentCustomerOrders, totalPriority, subtotal.ToString());
-
                 Console.WriteLine($"Customer {i + 1} ticket number: {totalPriority:D4}");
-                /*string custnum = (i + 1).ToString().PadLeft(4, '0');
-                Console.WriteLine($"Customer {i + 1} ticket number: {custnum}");*/
+                totalPriority += ans == 1 ? 1 : 2;
             }
+
             Console.WriteLine("\nList of Orders:");
             Console.WriteLine("".PadLeft(38, '-'));
 
             while (orders.Count > 0)
             {
                 var order = orders.Dequeue();
-                Console.WriteLine($"| Customer {order.priority:D4} |");
+                int totalQuantity = order.item.Count;
+
+                Console.WriteLine("| " + order.priority.ToString("D4") + " |");
                 Console.WriteLine("".PadLeft(38, '-'));
+
                 foreach (var food in order.item)
                 {
                     Console.WriteLine($"| {food} |");
